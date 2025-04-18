@@ -445,9 +445,9 @@ def convert_request(request, exclude_input_from_output, decoupled):
             input_length = len(input_token_ids)
         # Trim input token ids with input_lengths
         inputs['input_token_ids'] = input_token_ids[0:input_length]
-        inputs['max_new_tokens'] = get_input_scalar_by_name(
+        inputs['max_tokens'] = get_input_scalar_by_name(
             request, 'request_output_len', batch_size, batch_index)
-        if inputs['max_new_tokens'] is None:
+        if inputs['max_tokens'] is None:
             raise pb_utils.TritonModelException(
                 "A value is required for request_output_len")
         inputs['streaming'] = get_input_scalar_by_name(request, 'streaming',
@@ -1223,9 +1223,6 @@ class TritonPythonModel:
                             request_data.triton_req_id].remove(req_id)
                         if len(self.triton_req_id_to_req_ids[
                                 request_data.triton_req_id]) == 0:
-                            pb_utils.Logger.log_info(
-                                f"DELETING Req id {req_id}, triton_req_id {request_data.triton_req_id} "
-                            )
                             triton_request_final = True
                             del self.triton_req_id_to_req_ids[
                                 request_data.triton_req_id]
