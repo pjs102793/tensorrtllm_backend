@@ -730,3 +730,35 @@ parameters: {
     string_value: "${speculative_decoding_fast_logits}"
   }
 }
+
+model_warmup [
+  {
+    name: "gpt_warmup"
+    batch_size: 1
+    count: 1
+    inputs {
+      key: "input_ids"
+      value: {
+        data_type: TYPE_INT32
+        dims: [128]
+        random_data: true
+      }
+    }
+    inputs {
+      key: "input_lengths"
+      value: {
+        data_type: TYPE_INT32
+        dims: [1]
+        random_data: true
+      }
+    }
+    inputs {
+      key: "request_output_len"
+      value: {
+        data_type: TYPE_INT32
+        dims: [1]
+        random_data: true
+      }
+    }
+  }
+]

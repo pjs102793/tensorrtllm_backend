@@ -26,23 +26,21 @@ def simple_inference_test(request_id=1):
         print(f"[ERROR] [{request_id}] 채널 생성 실패: {str(e)}")
         return
 
-    np.random.seed(int(time.time()) + request_id)  # 또는 hash(request_id) 등
-
     # 입력 데이터 준비 (128 토큰 길이)
-    input_length = 450
+    input_length = 128
     input_ids = np.random.randint(0, 30000, size=(1, input_length), dtype=np.int32)
     input_lengths = np.array([[input_length]], dtype=np.int32)
-    output_len = np.array([[450]], dtype=np.int32)  # 20 토큰 생성
-    pad_id = np.array([[0]], dtype=np.int32)
-    end_id = np.array([[1]], dtype=np.int32)
+    output_len = np.array([[128]], dtype=np.int32)  # 20 토큰 생성
+    # pad_id = np.array([[0]], dtype=np.int32)
+    # end_id = np.array([[1]], dtype=np.int32)
 
     # 텐서 생성
     inputs = [
         utils.prepare_tensor("input_ids", input_ids, protocol),
         utils.prepare_tensor("input_lengths", input_lengths, protocol),
         utils.prepare_tensor("request_output_len", output_len, protocol),
-        utils.prepare_tensor("pad_id", pad_id, protocol),
-        utils.prepare_tensor("end_id", end_id, protocol),
+        # utils.prepare_tensor("pad_id", pad_id, protocol),
+        # utils.prepare_tensor("end_id", end_id, protocol),
     ]
 
     # 추론 요청
@@ -62,7 +60,6 @@ def simple_inference_test(request_id=1):
     print(f"[INFO] [{request_id}] 추론 완료: 지연 시간 {latency} ms")
     print(f"[INFO] [{request_id}] 출력 ID 형태: {output_ids.shape}")
     print(f"[INFO] [{request_id}] 시퀀스 길이: {seq_lengths}")
-    print(f"[INFO] [{request_id}] 첫 10개 출력 토큰: {output_ids[0, 0, :10]}")
 
 def run_parallel_inference(num_processes, num_batches=1, delay_between_batches=0):
     """여러 프로세스로 추론을 병렬 실행합니다."""
@@ -94,7 +91,7 @@ def run_parallel_inference(num_processes, num_batches=1, delay_between_batches=0
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='TensorRT-LLM 추론 병렬 테스트')
-    parser.add_argument('--processes', type=int, default=16, help='동시에 실행할 프로세스 수 (기본값: 32)')
+    parser.add_argument('--processes', type=int, default=8, help='동시에 실행할 프로세스 수 (기본값: 32)')
     parser.add_argument('--batches', type=int, default=1, help='실행할 배치 수 (기본값: 1)')
     parser.add_argument('--delay', type=float, default=0, help='배치 간 지연 시간(초) (기본값: 0)')
 
